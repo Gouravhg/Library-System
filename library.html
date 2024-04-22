@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+  <style>
+    /* Basic CSS styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 30px;
+    }
+    form {
+      margin: 20px auto;
+      width: 50%;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      float: right;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #searchInput {
+      width: 98%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 8px;
+    }
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Library Management System</h1>
+
+  <form id="bookForm">
+    <label for="bookName">Book Name:</label>
+    <input type="text" id="bookName" required>
+    <label for="authorName">Author Name:</label>
+    <input type="text" id="authorName" required>
+    <label for="genre">Genre:</label>
+    <select id="genre" required>
+      <option value="">Select Genre</option>
+      <option value="Fiction">Fiction</option>
+      <option value="Non-fiction">Romance</option>
+      <option value="Science Fiction">Science Fiction</option>
+      <option value="Fantasy">Fantasy</option>
+      <!-- Add more genres as needed -->
+    </select>
+    <button type="submit">Add Book</button>
+  </form>
+
+  <input type="text" id="searchInput" placeholder="Search...">
+
+  <table id="bookTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Book Name</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Book list will be appended here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Function to generate a unique ID
+    function generateId() {
+      return '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Function to add a new book to the list
+    function addBook() {
+      const bookNameInput = document.getElementById('bookName');
+      const authorNameInput = document.getElementById('authorName');
+      const genreSelect = document.getElementById('genre');
+      const bookName = bookNameInput.value.trim();
+      const authorName = authorNameInput.value.trim();
+      const genre = genreSelect.value;
+
+      if (bookName !== '' && authorName !== '' && genre !== '') {
+        const bookTable = document.getElementById('bookTable').getElementsByTagName('tbody')[0];
+        const newRow = bookTable.insertRow();
+        const id = generateId();
+        const cell1 = newRow.insertCell(0);
+        const cell2 = newRow.insertCell(1);
+        const cell3 = newRow.insertCell(2);
+        const cell4 = newRow.insertCell(3);
+        const cell5 = newRow.insertCell(4);
+
+        cell1.innerHTML = id;
+        cell2.innerHTML = bookName;
+        cell3.innerHTML = authorName;
+        cell4.innerHTML = genre;
+        cell5.innerHTML = '<button onclick="removeBook(this)">Remove</button>';
+
+        bookNameInput.value = '';
+        authorNameInput.value = '';
+        genreSelect.selectedIndex = 0;
+      } else {
+        alert('Please fill in all fields.');
+      }
+
+      // Prevent form submission
+      return false;
+    }
+
+    // Function to remove a book from the list
+    function removeBook(button) {
+      const row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+
+    // Function to search for books
+    function searchBooks() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.getElementById('bookTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+      
+      for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        let match = false;
+        for (let j = 1; j < cells.length - 1; j++) {
+          const cellText = cells[j].textContent.toLowerCase();
+          if (cellText.includes(input)) {
+            match = true;
+            break;
+          }
+        }
+        if (match) {
+          rows[i].style.display = '';
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+    }
+
+    // Event listeners
+    document.getElementById('bookForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      addBook();
+    });
+
+    document.getElementById('searchInput').addEventListener('keyup', searchBooks);
+  </script>
+</body>
+</html>
